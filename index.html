@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdSec - AI-Powered Design Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="bg-gray-50 font-sans"><!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+     <div class="flex items-center space-x-4">
+      <div class="text-2xl font-bold text-purple-600">
+       AdSec
+      </div><button onclick="showLogin()" class="flex items-center space-x-2 text-gray-700 hover:text-purple-600 transition-colors">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+       </svg><span class="text-sm font-medium">Login/Sign Up</span> </button>
+     </div>
+     <div class="hidden md:block">
+      <div class="ml-10 flex items-baseline space-x-4"><button onclick="showPage('homepage')" class="nav-link text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</button> <button onclick="showPage('ai-assistant')" class="nav-link text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">AI Assistant</button> <button onclick="showPage('design-studio')" class="nav-link text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Design Studio</button> <button onclick="showPage('subscription')" class="nav-link text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Pricing</button> <button onclick="showPage('faq')" class="nav-link text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">FAQ</button> <button onclick="showPage('support')" class="nav-link text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">Support</button>
+      </div>
+     </div>
+     <div class="md:hidden"><button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-purple-600 focus:outline-none">
+       <svg class="h-6 w-6" fill="none" viewbox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+       </svg></button>
+     </div>
+    </div>
+   </div><!-- Mobile menu -->
+   <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+    <div class="px-2 pt-2 pb-3 space-y-1"><button onclick="showPage('homepage')" class="block text-gray-700 hover:text-purple-600 px-3 py-2 text-base font-medium w-full text-left">Home</button> <button onclick="showPage('ai-assistant')" class="block text-gray-700 hover:text-purple-600 px-3 py-2 text-base font-medium w-full text-left">AI Assistant</button> <button onclick="showPage('design-studio')" class="block text-gray-700 hover:text-purple-600 px-3 py-2 text-base font-medium w-full text-left">Design Studio</button> <button onclick="showPage('subscription')" class="block text-gray-700 hover:text-purple-600 px-3 py-2 text-base font-medium w-full text-left">Pricing</button> <button onclick="showPage('faq')" class="block text-gray-700 hover:text-purple-600 px-3 py-2 text-base font-medium w-full text-left">FAQ</button> <button onclick="showPage('support')" class="block text-gray-700 hover:text-purple-600 px-3 py-2 text-base font-medium w-full text-left">Support</button>
+    </div>
+   </div>
+  </nav><!-- Login/Signup Modal -->
+  <div id="login-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+   <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"><button onclick="closeLogin()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+     </svg></button>
+    <div class="text-center mb-8">
+     <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome to AdSec</h2>
+     <p class="text-gray-600">Sign in to continue or create a new account</p>
+    </div><!-- Tab Switcher -->
+    <div class="flex mb-6 bg-gray-100 rounded-lg p-1"><button id="login-tab" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-md font-medium transition-colors bg-white text-purple-600 shadow-sm">Login</button> <button id="signup-tab" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-md font-medium transition-colors text-gray-600 hover:text-gray-900">Sign Up</button>
+    </div><!-- Login Form -->
+    <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+     <div><label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label> <input type="email" id="login-email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="your@email.com">
+     </div>
+     <div><label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label> <input type="password" id="login-password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="••••••••">
+     </div>
+     <div class="flex items-center justify-between text-sm"><label class="flex items-center"> <input type="checkbox" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500 mr-2"> <span class="text-gray-600">Remember me</span> </label> <button type="button" onclick="showNotification('Password reset link sent to your email', 'info')" class="text-purple-600 hover:text-purple-700 font-medium">Forgot password?</button>
+     </div><button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">Sign In</button>
+    </form><!-- Signup Form -->
+    <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-4 hidden">
+     <div><label for="signup-name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label> <input type="text" id="signup-name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="John Doe">
+     </div>
+     <div><label for="signup-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label> <input type="email" id="signup-email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="your@email.com">
+     </div>
+     <div><label for="signup-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label> <input type="password" id="signup-password" required minlength="8" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="••••••••">
+     </div>
+     <div><label for="signup-confirm" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label> <input type="password" id="signup-confirm" required minlength="8" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="••••••••">
+     </div>
+     <div class="flex items-start"><input type="checkbox" id="terms-checkbox" required class="rounded border-gray-300 text-purple-600 focus:ring-purple-500 mt-1 mr-2"> <label for="terms-checkbox" class="text-sm text-gray-600">I agree to the Terms of Service and Privacy Policy</label>
+     </div><button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">Create Account</button>
+    </form><!-- Divider -->
+    <div class="relative my-6">
+     <div class="absolute inset-0 flex items-center">
+      <div class="w-full border-t border-gray-300"></div>
+     </div>
+     <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">Or continue with</span>
+     </div>
+    </div><!-- Social Login -->
+    <div class="grid grid-cols-2 gap-3"><button onclick="handleSocialLogin('Google')" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+      <svg class="w-5 h-5 mr-2" viewbox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /> <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /> <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" /> <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+      </svg><span class="text-sm font-medium text-gray-700">Google</span> </button> <button onclick="handleSocialLogin('GitHub')" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+      <svg class="w-5 h-5 mr-2" fill="#181717" viewbox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+      </svg><span class="text-sm font-medium text-gray-700">GitHub</span> </button>
+    </div>
+   </div>
+  </div><!-- Homepage -->
+  <div id="homepage" class="page active">
+   <main><!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-5xl md:text-6xl font-bold mb-6">Create Amazing Designs with AI</h1>
+      <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Transform your ideas into stunning visuals with our AI-powered design platform. No design experience required.</p>
+      <div class="space-x-4"><button onclick="showPage('ai-assistant')" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">Get Started</button> <button onclick="showPage('design-studio')" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors">Explore Studio</button>
+      </div>
+     </div>
+    </section><!-- Features Section -->
+    <section class="py-20 bg-white">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+       <h2 class="text-4xl font-bold text-gray-900 mb-4">Why Choose AdSec?</h2>
+       <p class="text-xl text-gray-600">Powerful features to bring your creative vision to life</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+       <div class="text-center p-6 card-hover bg-gray-50 rounded-xl">
+        <div class="text-4xl mb-4">
+         🤖
+        </div>
+        <h3 class="text-xl font-semibold mb-3">AI-Powered Design</h3>
+        <p class="text-gray-600">Let our AI assistant help you create professional designs in seconds</p>
+       </div>
+       <div class="text-center p-6 card-hover bg-gray-50 rounded-xl">
+        <div class="text-4xl mb-4">
+         🎨
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Professional Studio</h3>
+        <p class="text-gray-600">Access advanced design tools and templates for any project</p>
+       </div>
+       <div class="text-center p-6 card-hover bg-gray-50 rounded-xl">
+        <div class="text-4xl mb-4">
+         ⚡
+        </div>
+        <h3 class="text-xl font-semibold mb-3">Lightning Fast</h3>
+        <p class="text-gray-600">Create and export designs in minutes, not hours</p>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div><!-- AI Assistant Page -->
+  <div id="ai-assistant" class="page">
+   <main class="py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">AI Design Assistant</h1>
+      <p class="text-xl text-gray-600">Describe what you want to create and let AI do the magic</p>
+     </div>
+     <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+      <div class="mb-6"><label for="design-prompt" class="block text-sm font-medium text-gray-700 mb-2">What would you like to create?</label> <textarea id="design-prompt" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Example: Create a modern logo for a coffee shop with warm colors and a minimalist style..."></textarea>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+       <div><label for="design-type" class="block text-sm font-medium text-gray-700 mb-2">Design Type</label> <select id="design-type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"> <option>Logo</option> <option>Social Media Post</option> <option>Business Card</option> <option>Flyer</option> <option>Website Banner</option> </select>
+       </div>
+       <div><label for="style" class="block text-sm font-medium text-gray-700 mb-2">Style</label> <select id="style" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"> <option>Modern</option> <option>Minimalist</option> <option>Vintage</option> <option>Bold</option> <option>Elegant</option> </select>
+       </div>
+      </div><button onclick="generateDesign()" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">Generate Design</button>
+     </div>
+     <div id="ai-results" class="hidden bg-white rounded-xl shadow-lg p-8">
+      <h3 class="text-2xl font-semibold mb-6">Generated Designs</h3>
+      <div class="grid md:grid-cols-2 gap-6">
+       <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <div class="text-6xl mb-4">
+         🎨
+        </div>
+        <p class="text-gray-600">Design Option 1</p>
+       </div>
+       <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <div class="text-6xl mb-4">
+         ✨
+        </div>
+        <p class="text-gray-600">Design Option 2</p>
+       </div>
+      </div>
+      <div class="mt-6 text-center"><button onclick="showPage('design-studio')" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors mr-4">Edit in Studio</button> <button onclick="regenerateDesign()" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors">Generate More</button>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div><!-- Design Studio Page -->
+  <div id="design-studio" class="page">
+   <main class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Design Studio</h1>
+      <p class="text-xl text-gray-600">Professional design tools at your fingertips</p>
+     </div>
+     <div class="grid lg:grid-cols-4 gap-6"><!-- Toolbar -->
+      <div class="lg:col-span-1 bg-white rounded-xl shadow-lg p-6">
+       <h3 class="text-lg font-semibold mb-4">Tools</h3>
+       <div class="space-y-3"><button onclick="selectTool('text')" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">📝 Text</button> <button onclick="selectTool('shapes')" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">⬛ Shapes</button> <button onclick="selectTool('images')" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">🖼️ Images</button> <button onclick="selectTool('background')" class="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">🎨 Background</button>
+       </div>
+       <h3 class="text-lg font-semibold mt-8 mb-4">Templates</h3>
+       <div class="grid grid-cols-2 gap-2">
+        <div onclick="loadTemplate('social')" class="border rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50 transition-colors">
+         <div class="text-2xl mb-1">
+          📱
+         </div>
+         <p class="text-xs">Social</p>
+        </div>
+        <div onclick="loadTemplate('business')" class="border rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50 transition-colors">
+         <div class="text-2xl mb-1">
+          💼
+         </div>
+         <p class="text-xs">Business</p>
+        </div>
+       </div>
+      </div><!-- Canvas -->
+      <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+       <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Canvas</h3>
+        <div class="space-x-2"><button onclick="undoAction()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors">↶ Undo</button> <button onclick="redoAction()" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors">↷ Redo</button>
+        </div>
+       </div>
+       <div id="canvas-area" class="border-2 border-gray-300 rounded-lg h-96 bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+        <div class="text-center text-gray-500">
+         <div class="text-4xl mb-2">
+          🎨
+         </div>
+         <p>Your design canvas</p>
+         <p class="text-sm">Select tools to start creating</p>
+        </div>
+       </div>
+       <div class="mt-4 flex justify-center space-x-4"><button onclick="saveDesign()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">Save Design</button> <button onclick="exportDesign()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">Export</button>
+       </div>
+      </div><!-- Properties Panel -->
+      <div class="lg:col-span-1 bg-white rounded-xl shadow-lg p-6">
+       <h3 class="text-lg font-semibold mb-4">Properties</h3>
+       <div id="properties-panel">
+        <div class="space-y-4">
+         <div><label for="element-color" class="block text-sm font-medium text-gray-700 mb-2">Color</label> <input type="color" id="element-color" class="w-full h-10 rounded border border-gray-300" value="#6366f1">
+         </div>
+         <div><label for="element-size" class="block text-sm font-medium text-gray-700 mb-2">Size</label> <input type="range" id="element-size" min="10" max="100" value="50" class="w-full">
+         </div>
+         <div><label for="element-opacity" class="block text-sm font-medium text-gray-700 mb-2">Opacity</label> <input type="range" id="element-opacity" min="0" max="100" value="100" class="w-full">
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div><!-- Subscription Page -->
+  <div id="subscription" class="page">
+   <main class="py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Choose Your Plan</h1>
+      <p class="text-xl text-gray-600">Flexible pricing for creators of all levels</p>
+     </div>
+     <div class="grid md:grid-cols-3 gap-8"><!-- Free Plan -->
+      <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
+       <div class="text-center">
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">Free</h3>
+        <div class="text-4xl font-bold text-gray-900 mb-4">
+         $0<span class="text-lg text-gray-600">/month</span>
+        </div>
+        <p class="text-gray-600 mb-6">Perfect for getting started</p>
+       </div>
+       <ul class="space-y-3 mb-8">
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> 5 AI generations per month</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Basic templates</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Standard resolution exports</li>
+        <li class="flex items-center"><span class="text-gray-400 mr-2">✗</span> Advanced AI features</li>
+       </ul><button onclick="selectPlan('free')" class="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors">Get Started</button>
+      </div><!-- Pro Plan -->
+      <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-purple-500 relative">
+       <div class="absolute -top-4 left-1/2 transform -translate-x-1/2"><span class="bg-purple-500 text-white px-4 py-1 rounded-full text-sm font-semibold">Most Popular</span>
+       </div>
+       <div class="text-center">
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
+        <div class="text-4xl font-bold text-gray-900 mb-4">
+         $19<span class="text-lg text-gray-600">/month</span>
+        </div>
+        <p class="text-gray-600 mb-6">For serious creators</p>
+       </div>
+       <ul class="space-y-3 mb-8">
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> 100 AI generations per month</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Premium templates</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> High-resolution exports</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Advanced AI features</li>
+       </ul><button onclick="selectPlan('pro')" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">Choose Pro</button>
+      </div><!-- Enterprise Plan -->
+      <div class="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
+       <div class="text-center">
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+        <div class="text-4xl font-bold text-gray-900 mb-4">
+         $99<span class="text-lg text-gray-600">/month</span>
+        </div>
+        <p class="text-gray-600 mb-6">For teams and agencies</p>
+       </div>
+       <ul class="space-y-3 mb-8">
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Unlimited AI generations</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> All templates &amp; features</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Team collaboration</li>
+        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Priority support</li>
+       </ul><button onclick="selectPlan('enterprise')" class="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors">Contact Sales</button>
+      </div>
+     </div><!-- Credit System -->
+     <div class="mt-16 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8">
+      <div class="text-center mb-8">
+       <h2 class="text-3xl font-bold text-gray-900 mb-4">Need More Credits?</h2>
+       <p class="text-lg text-gray-600">Purchase additional AI generation credits anytime</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+       <div class="bg-white rounded-lg p-6 text-center shadow-md">
+        <h4 class="text-xl font-semibold mb-2">Starter Pack</h4>
+        <div class="text-2xl font-bold text-purple-600 mb-2">
+         $9
+        </div>
+        <p class="text-gray-600 mb-4">25 AI generations</p><button onclick="buyCredits(25)" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors">Buy Now</button>
+       </div>
+       <div class="bg-white rounded-lg p-6 text-center shadow-md">
+        <h4 class="text-xl font-semibold mb-2">Power Pack</h4>
+        <div class="text-2xl font-bold text-purple-600 mb-2">
+         $29
+        </div>
+        <p class="text-gray-600 mb-4">100 AI generations</p><button onclick="buyCredits(100)" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors">Buy Now</button>
+       </div>
+       <div class="bg-white rounded-lg p-6 text-center shadow-md">
+        <h4 class="text-xl font-semibold mb-2">Mega Pack</h4>
+        <div class="text-2xl font-bold text-purple-600 mb-2">
+         $79
+        </div>
+        <p class="text-gray-600 mb-4">300 AI generations</p><button onclick="buyCredits(300)" class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors">Buy Now</button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div><!-- FAQ Page -->
+  <div id="faq" class="page">
+   <main class="py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
+      <p class="text-xl text-gray-600">Find answers to common questions about AdSec</p>
+     </div>
+     <div class="space-y-6">
+      <div class="bg-white rounded-xl shadow-lg"><button onclick="toggleFAQ(1)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"> <h3 class="text-lg font-semibold">How does the AI design assistant work?</h3><span id="faq-icon-1" class="text-2xl">+</span> </button>
+       <div id="faq-content-1" class="hidden px-6 pb-4">
+        <p class="text-gray-600">Our AI analyzes your text description and generates multiple design options based on current design trends, color theory, and composition principles. Simply describe what you want, and our AI will create professional-quality designs in seconds.</p>
+       </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg"><button onclick="toggleFAQ(2)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"> <h3 class="text-lg font-semibold">Can I edit the AI-generated designs?</h3><span id="faq-icon-2" class="text-2xl">+</span> </button>
+       <div id="faq-content-2" class="hidden px-6 pb-4">
+        <p class="text-gray-600">Absolutely! All AI-generated designs can be fully customized in our Design Studio. You can change colors, fonts, layouts, add or remove elements, and make any adjustments to match your vision perfectly.</p>
+       </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg"><button onclick="toggleFAQ(3)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"> <h3 class="text-lg font-semibold">What file formats can I export?</h3><span id="faq-icon-3" class="text-2xl">+</span> </button>
+       <div id="faq-content-3" class="hidden px-6 pb-4">
+        <p class="text-gray-600">You can export your designs in multiple formats including PNG, JPG, PDF, and SVG. Pro and Enterprise users also get access to high-resolution exports perfect for print materials.</p>
+       </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg"><button onclick="toggleFAQ(4)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"> <h3 class="text-lg font-semibold">How do credits work?</h3><span id="faq-icon-4" class="text-2xl">+</span> </button>
+       <div id="faq-content-4" class="hidden px-6 pb-4">
+        <p class="text-gray-600">Each AI generation uses one credit. Credits reset monthly with your subscription, and you can purchase additional credit packs anytime. Using the Design Studio and editing existing designs doesn't consume credits.</p>
+       </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg"><button onclick="toggleFAQ(5)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"> <h3 class="text-lg font-semibold">Is there a free trial?</h3><span id="faq-icon-5" class="text-2xl">+</span> </button>
+       <div id="faq-content-5" class="hidden px-6 pb-4">
+        <p class="text-gray-600">Yes! Our Free plan gives you 5 AI generations per month with access to basic templates and standard exports. You can upgrade anytime to unlock more features and generations.</p>
+       </div>
+      </div>
+      <div class="bg-white rounded-xl shadow-lg"><button onclick="toggleFAQ(6)" class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"> <h3 class="text-lg font-semibold">Can I cancel my subscription anytime?</h3><span id="faq-icon-6" class="text-2xl">+</span> </button>
+       <div id="faq-content-6" class="hidden px-6 pb-4">
+        <p class="text-gray-600">Yes, you can cancel your subscription at any time. You'll continue to have access to your plan features until the end of your current billing period. Your designs and account remain accessible even after cancellation.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div><!-- Support Page -->
+  <div id="support" class="page">
+   <main class="py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Customer Support</h1>
+      <p class="text-xl text-gray-600">We're here to help you succeed with AdSec</p>
+     </div>
+     <div class="grid lg:grid-cols-2 gap-12"><!-- Contact Form -->
+      <div class="bg-white rounded-xl shadow-lg p-8">
+       <h2 class="text-2xl font-semibold mb-6">Send us a message</h2>
+       <form onsubmit="submitSupportForm(event)">
+        <div class="space-y-6">
+         <div><label for="support-name" class="block text-sm font-medium text-gray-700 mb-2">Name</label> <input type="text" id="support-name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+         </div>
+         <div><label for="support-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label> <input type="email" id="support-email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+         </div>
+         <div><label for="support-category" class="block text-sm font-medium text-gray-700 mb-2">Category</label> <select id="support-category" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"> <option>Technical Issue</option> <option>Billing Question</option> <option>Feature Request</option> <option>General Inquiry</option> </select>
+         </div>
+         <div><label for="support-message" class="block text-sm font-medium text-gray-700 mb-2">Message</label> <textarea id="support-message" rows="5" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Please describe your issue or question in detail..."></textarea>
+         </div><button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">Send Message</button>
+        </div>
+       </form>
+      </div><!-- Support Options -->
+      <div class="space-y-8">
+       <div class="bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-semibold mb-6">Other ways to get help</h2>
+        <div class="space-y-6">
+         <div class="flex items-start space-x-4">
+          <div class="text-2xl">
+           💬
+          </div>
+          <div>
+           <h3 class="font-semibold mb-2">Live Chat</h3>
+           <p class="text-gray-600 mb-3">Chat with our support team in real-time</p><button onclick="startLiveChat()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">Start Chat</button>
+          </div>
+         </div>
+         <div class="flex items-start space-x-4">
+          <div class="text-2xl">
+           📧
+          </div>
+          <div>
+           <h3 class="font-semibold mb-2">Email Support</h3>
+           <p class="text-gray-600 mb-3">Send us an email and we'll respond within 24 hours</p><a href="mailto:support@adsec.com" class="text-purple-600 hover:text-purple-700 font-medium">support@adsec.com</a>
+          </div>
+         </div>
+         <div class="flex items-start space-x-4">
+          <div class="text-2xl">
+           📚
+          </div>
+          <div>
+           <h3 class="font-semibold mb-2">Help Center</h3>
+           <p class="text-gray-600 mb-3">Browse our comprehensive knowledge base</p><button onclick="openHelpCenter()" class="text-purple-600 hover:text-purple-700 font-medium">Visit Help Center →</button>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8">
+        <h3 class="text-xl font-semibold mb-4">Response Times</h3>
+        <div class="space-y-3">
+         <div class="flex justify-between"><span class="text-gray-700">Free Plan:</span> <span class="font-medium">48-72 hours</span>
+         </div>
+         <div class="flex justify-between"><span class="text-gray-700">Pro Plan:</span> <span class="font-medium">12-24 hours</span>
+         </div>
+         <div class="flex justify-between"><span class="text-gray-700">Enterprise:</span> <span class="font-medium">Priority support</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div><!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-4 gap-8">
+     <div>
+      <div class="text-2xl font-bold mb-4">
+       AdSec
+      </div>
+      <p class="text-gray-400">AI-powered design platform for creators of all levels.</p>
+     </div>
+     <div>
+      <h4 class="font-semibold mb-4">Product</h4>
+      <ul class="space-y-2 text-gray-400">
+       <li><button onclick="showPage('ai-assistant')" class="hover:text-white transition-colors">AI Assistant</button></li>
+       <li><button onclick="showPage('design-studio')" class="hover:text-white transition-colors">Design Studio</button></li>
+       <li><button onclick="showPage('subscription')" class="hover:text-white transition-colors">Pricing</button></li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="font-semibold mb-4">Support</h4>
+      <ul class="space-y-2 text-gray-400">
+       <li><button onclick="showPage('faq')" class="hover:text-white transition-colors">FAQ</button></li>
+       <li><button onclick="showPage('support')" class="hover:text-white transition-colors">Contact Us</button></li>
+       <li><button onclick="openHelpCenter()" class="hover:text-white transition-colors">Help Center</button></li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="font-semibold mb-4">Connect</h4>
+      <div class="flex space-x-4"><button onclick="openSocial('twitter')" class="text-gray-400 hover:text-white transition-colors">🐦</button> <button onclick="openSocial('facebook')" class="text-gray-400 hover:text-white transition-colors">📘</button> <button onclick="openSocial('instagram')" class="text-gray-400 hover:text-white transition-colors">📷</button>
+      </div>
+     </div>
+    </div>
+    <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+     <p>© 2024 AdSec. All rights reserved.</p>
+    </div>
+   </div>
+  </footer>
+  <script>
+        // Navigation functionality
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navigation active state
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('text-purple-600'));
+            
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // AI Assistant functionality
+        function generateDesign() {
+            const prompt = document.getElementById('design-prompt').value;
+            const designType = document.getElementById('design-type').value;
+            const style = document.getElementById('style').value;
+            
+            if (!prompt.trim()) {
+                showNotification('Please describe what you want to create', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Generating...';
+            button.disabled = true;
+            
+            // Simulate AI generation
+            setTimeout(() => {
+                document.getElementById('ai-results').classList.remove('hidden');
+                button.textContent = originalText;
+                button.disabled = false;
+                showNotification('Designs generated successfully!', 'success');
+            }, 2000);
+        }
+
+        function regenerateDesign() {
+            showNotification('Generating new design variations...', 'info');
+        }
+
+        // Design Studio functionality
+        function selectTool(tool) {
+            showNotification(`${tool.charAt(0).toUpperCase() + tool.slice(1)} tool selected`, 'info');
+        }
+
+        function loadTemplate(template) {
+            showNotification(`${template.charAt(0).toUpperCase() + template.slice(1)} template loaded`, 'success');
+        }
+
+        function undoAction() {
+            showNotification('Action undone', 'info');
+        }
+
+        function redoAction() {
+            showNotification('Action redone', 'info');
+        }
+
+        function saveDesign() {
+            showNotification('Design saved successfully!', 'success');
+        }
+
+        function exportDesign() {
+            showNotification('Design exported successfully!', 'success');
+        }
+
+        // Subscription functionality
+        function selectPlan(plan) {
+            if (plan === 'free') {
+                showNotification('Welcome to AdSec Free!', 'success');
+            } else if (plan === 'enterprise') {
+                showNotification('Redirecting to sales contact...', 'info');
+            } else {
+                showNotification(`Redirecting to ${plan} plan checkout...`, 'info');
+            }
+        }
+
+        function buyCredits(amount) {
+            showNotification(`Purchasing ${amount} credits...`, 'info');
+        }
+
+        // FAQ functionality
+        function toggleFAQ(faqNumber) {
+            const content = document.getElementById(`faq-content-${faqNumber}`);
+            const icon = document.getElementById(`faq-icon-${faqNumber}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.textContent = '−';
+            } else {
+                content.classList.add('hidden');
+                icon.textContent = '+';
+            }
+        }
+
+        // Support functionality
+        function submitSupportForm(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('support-name').value;
+            const email = document.getElementById('support-email').value;
+            const message = document.getElementById('support-message').value;
+            
+            if (!name || !email || !message) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Simulate form submission
+            showNotification('Message sent successfully! We\'ll get back to you soon.', 'success');
+            event.target.reset();
+        }
+
+        function startLiveChat() {
+            showNotification('Starting live chat...', 'info');
+        }
+
+        function openHelpCenter() {
+            showNotification('Opening help center...', 'info');
+        }
+
+        function openSocial(platform) {
+            showNotification(`Opening ${platform}...`, 'info');
+        }
+
+        function showLogin() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function closeLogin() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('login-tab');
+            const signupTab = document.getElementById('signup-tab');
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+
+            if (tab === 'login') {
+                loginTab.classList.add('bg-white', 'text-purple-600', 'shadow-sm');
+                loginTab.classList.remove('text-gray-600');
+                signupTab.classList.remove('bg-white', 'text-purple-600', 'shadow-sm');
+                signupTab.classList.add('text-gray-600');
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            } else {
+                signupTab.classList.add('bg-white', 'text-purple-600', 'shadow-sm');
+                signupTab.classList.remove('text-gray-600');
+                loginTab.classList.remove('bg-white', 'text-purple-600', 'shadow-sm');
+                loginTab.classList.add('text-gray-600');
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (email && password) {
+                showNotification('Welcome back! Successfully logged in.', 'success');
+                closeLogin();
+                // Clear form
+                document.getElementById('login-form').reset();
+            }
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+
+            if (password !== confirm) {
+                showNotification('Passwords do not match!', 'error');
+                return;
+            }
+
+            if (name && email && password) {
+                showNotification('Account created successfully! Welcome to AdSec.', 'success');
+                closeLogin();
+                // Clear form
+                document.getElementById('signup-form').reset();
+            }
+        }
+
+        function handleSocialLogin(provider) {
+            showNotification(`Signing in with ${provider}...`, 'info');
+            setTimeout(() => {
+                showNotification(`Successfully signed in with ${provider}!`, 'success');
+                closeLogin();
+            }, 1500);
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notification
+            const existing = document.getElementById('notification');
+            if (existing) {
+                existing.remove();
+            }
+            
+            // Create notification
+            const notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('homepage');
+        });
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a4d7026763588c1',t:'MTc2NDIwMjU5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
